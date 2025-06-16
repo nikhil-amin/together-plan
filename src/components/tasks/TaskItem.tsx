@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { Task, UserProfile } from '@/lib/types';
@@ -53,7 +54,7 @@ export function TaskItem({ task, onEdit, onDelete, currentUserId, partners }: Ta
     }
   };
   
-  const getStatusText = ()_=> {
+  const getStatusText = () => {
      switch (effectiveStatus) {
       case 'completed': return 'Completed'; 
       case 'overdue': return 'Overdue';

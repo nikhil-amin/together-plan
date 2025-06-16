@@ -1,12 +1,14 @@
+
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
 import type { Task, UserProfile } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWedding } from '@/contexts/WeddingContext';
-import { getTasksForSession, deleteTask, getUserProfile } from '@/lib/firebase/firestore';
+import { getTasksForSession, deleteTask } from '@/lib/firebase/firestore';
+import { getUserProfile } from '@/lib/firebase/auth'; // Corrected import path
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Loader2, Filter } from 'lucide-react';
+import { PlusCircle, Loader2, Filter, ListChecks } from 'lucide-react';
 import { TaskItem } from '@/components/tasks/TaskItem';
 import { TaskForm } from '@/components/tasks/TaskForm';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';

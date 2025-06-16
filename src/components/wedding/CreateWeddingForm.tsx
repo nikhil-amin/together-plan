@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,7 +20,7 @@ import { format } from 'date-fns';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { createWeddingSession } from '@/lib/firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
-import { useWedding } from '@/contexts/WeddingContext';
+// Removed useWedding import as refreshWeddingSession is no longer called directly
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -32,9 +33,9 @@ const formSchema = z.object({
 
 export function CreateWeddingForm() {
   const { user } = useAuth();
-  const { refreshWeddingSession } = useWedding();
+  // const { refreshWeddingSession } = useWedding(); // Removed
   const { toast } = useToast();
-  const router = useRouter();
+  const router = useRouter(); // router can be kept if future redirects are needed here
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -51,14 +52,22 @@ export function CreateWeddingForm() {
     }
     setIsSubmitting(true);
     try {
-      const newSession = await createWeddingSession(user.uid, values.weddingDate);
-      await refreshWeddingSession(); // This will update the context and trigger redirect via (app)/layout or page listeners
+      // createWeddingSession updates the user's activeWeddingId in Firestore.
+      // AuthContext will detect this change via its onSnapshot listener for the user document.
+      // This will update the user object in AuthContext.
+      // WeddingContext, which depends on user.activeWeddingId, will then update its own listeners
+      // to fetch the new wedding session.
+      await createWeddingSession(user.uid, values.weddingDate);
+      // await refreshWeddingSession(); // REMOVED - Rely on reactive updates from contexts
       toast({ title: 'Success!', description: `Wedding session created for ${format(values.weddingDate, "PPP")}.` });
-      // router.push('/dashboard'); // Let WeddingContext listener handle redirect
+      // The redirect to /dashboard should now be handled automatically by AppLayoutContent
+      // once AuthContext and WeddingContext have updated.
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Failed to create wedding', description: error.message });
-      setIsSubmitting(false);
+      setIsSubmitting(false); // Only set to false on error, success will navigate away
     }
+    // Do not set isSubmitting to false here on success, as navigation should occur.
+    // If an error occurs, it's set above. If the component unmounts on success, this state is cleared.
   }
 
   return (

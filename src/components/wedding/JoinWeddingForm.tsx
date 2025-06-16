@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,7 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { findWeddingSessionByShareCode, joinWeddingSession } from '@/lib/firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
-import { useWedding } from '@/contexts/WeddingContext';
+// Removed useWedding import as refreshWeddingSession is no longer called directly
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -27,9 +28,9 @@ const formSchema = z.object({
 
 export function JoinWeddingForm() {
   const { user } = useAuth();
-  const { refreshWeddingSession } = useWedding();
+  // const { refreshWeddingSession } = useWedding(); // Removed
   const { toast } = useToast();
-  const router = useRouter();
+  const router = useRouter(); // router can be kept if future redirects are needed here
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -52,10 +53,13 @@ export function JoinWeddingForm() {
         setIsSubmitting(false);
         return;
       }
+      // joinWeddingSession updates the user's activeWeddingId in Firestore.
+      // AuthContext will detect this change.
+      // WeddingContext will then react to the updated user object.
       await joinWeddingSession(sessionToJoin.id, user.uid);
-      await refreshWeddingSession();
+      // await refreshWeddingSession(); // REMOVED - Rely on reactive updates
       toast({ title: 'Success!', description: 'You have joined the wedding session.' });
-      // router.push('/dashboard'); // Let WeddingContext listener handle redirect
+      // Redirect to dashboard should be handled by AppLayoutContent
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Failed to join wedding', description: error.message });
       setIsSubmitting(false);

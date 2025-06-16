@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   output: 'export', // For static site generation
   basePath: '/together-plan', // IMPORTANT: Replace '/together-plan' with '/your-repository-name' if different
-  assetPrefix: '/together-plan', // Must match basePath for GitHub Pages deployment
+  assetPrefix: '/together-plan/', // Must match basePath for GitHub Pages deployment
+  trailingSlash: true,            
   typescript: {
     ignoreBuildErrors: true,
   },

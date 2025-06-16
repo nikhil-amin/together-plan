@@ -1,14 +1,13 @@
 
 # TogetherPlan - Collaborative Wedding Planning App
 
-TogetherPlan is a web application designed to help couples collaboratively plan their wedding. It offers features like a shared checklist, a wedding calendar, AI-powered vendor suggestions, and a countdown to the big day, all in a user-friendly interface.
+TogetherPlan is a web application designed to help couples collaboratively plan their wedding. It offers features like a shared checklist, a wedding calendar, and a countdown to the big day, all in a user-friendly interface.
 
 ## ✨ Key Features
 
 *   **Dashboard:** A central hub displaying a countdown to the wedding, quick links to other sections, a summary of tasks, and today's focus.
 *   **Collaborative Checklist:** Create, assign, and track wedding tasks. Partners can see and update tasks in real-time. Filter tasks by status (all, my tasks, pending, completed, overdue).
 *   **Wedding Calendar:** Visualize task deadlines and important dates on a calendar.
-*   **AI Vendor Suggestions:** Get personalized vendor recommendations (e.g., photographers, florists) based on location, budget, style, and other criteria, powered by Genkit and Google's Gemini models.
 *   **User Authentication:** Secure sign-up and login using email/password or Google Sign-In.
 *   **Wedding Session Management:**
     *   Create a new wedding plan.
@@ -32,9 +31,6 @@ TogetherPlan is a web application designed to help couples collaboratively plan 
         *   Firebase Authentication (User management)
         *   Cloud Firestore (NoSQL Database for sessions, tasks, user profiles)
         *   Firebase Storage (Configured, for potential future file uploads)
-*   **Generative AI:**
-    *   [Genkit (Firebase Genkit)](https://firebase.google.com/docs/genkit)
-    *   Google AI (Gemini models for vendor suggestions)
 *   **Deployment (Assumed):**
     *   Firebase Hosting or a similar platform that supports Next.js (like Vercel). App Hosting is configured in `apphosting.yaml`.
 
@@ -43,7 +39,6 @@ TogetherPlan is a web application designed to help couples collaboratively plan 
 *   [Node.js](https://nodejs.org/) (version 18.x or later recommended)
 *   [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 *   A Firebase project.
-*   A Google Cloud project (usually the same as your Firebase project) with the necessary AI/ML APIs enabled (e.g., "Generative Language API" or "Vertex AI API") for Genkit and billing enabled if required.
 
 ## ⚙️ Setup & Configuration
 
@@ -74,9 +69,6 @@ TogetherPlan is a web application designed to help couples collaboratively plan 
     *   **(Optional) Enable Firebase Storage:**
         *   Go to Storage -> Get started.
         *   Follow the prompts to set up default security rules.
-    *   **Enable Google AI APIs for Genkit:**
-        *   In your Google Cloud Console (linked to your Firebase project), ensure the "Generative Language API" or a similar API providing access to Gemini models is enabled.
-        *   Ensure billing is enabled on your Google Cloud project if required for the API usage.
 
 4.  **Configure Environment Variables:**
     *   Create a `.env` file in the root of your project.
@@ -121,17 +113,6 @@ TogetherPlan is a web application designed to help couples collaboratively plan 
     yarn dev
     ```
     This usually starts the app on `http://localhost:9002` (as configured in `package.json`).
-
-2.  **Start the Genkit development server (for AI features):**
-    Open a new terminal window/tab and run:
-    ```bash
-    npm run genkit:dev
-    # or to watch for changes in AI flows:
-    # npm run genkit:watch
-    ```
-    This will start the Genkit development flow server, typically on port 3100. The Next.js app will make requests to this server for AI functionalities.
-
-    Ensure both servers are running for all features to work.
 
 ## 🛠️ Building for Production
 

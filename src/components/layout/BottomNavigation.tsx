@@ -2,14 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, ListChecks, CalendarDays, Settings, Users, Sparkles } from 'lucide-react'; // Added Sparkles for AI
+import { Home, ListChecks, CalendarDays, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/dashboard', label: 'Home', icon: Home },
   { href: '/checklist', label: 'Checklist', icon: ListChecks },
   { href: '/calendar', label: 'Calendar', icon: CalendarDays },
-  { href: '/vendor-suggestions', label: 'Vendors', icon: Sparkles }, // Added Vendor Suggestions
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 

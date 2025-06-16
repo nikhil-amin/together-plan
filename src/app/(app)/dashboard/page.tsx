@@ -88,11 +88,10 @@ export default function DashboardPage() {
         <CardHeader>
           <CardTitle className="font-headline text-xl text-primary">Quick Links</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <CardContent className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {[
             {label: 'Checklist', href: '/checklist', icon: ListChecks},
             {label: 'Calendar', href: '/calendar', icon: CalendarDays},
-            {label: 'Vendors', href: '/vendor-suggestions', icon: Sparkles},
             {label: 'Settings', href: '/settings', icon: Settings},
           ].map(link => (
             <Button key={link.label} variant="outline" asChild className="h-20 sm:h-24 flex-col gap-1 text-center shadow-md hover:shadow-lg transition-shadow border-2 border-transparent hover:border-primary/30">

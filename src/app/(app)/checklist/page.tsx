@@ -5,8 +5,8 @@ import { useEffect, useState, useMemo } from 'react';
 import type { Task, UserProfile } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWedding } from '@/contexts/WeddingContext';
-import { getTasksForSession, deleteTask } from '@/lib/firebase/firestore';
-import { getUserProfile } from '@/lib/firebase/auth'; // Corrected import path
+import { deleteTask } from '@/lib/firebase/firestore';
+import { getUserProfile } from '@/lib/firebase/auth';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Loader2, Filter, ListChecks } from 'lucide-react';
 import { TaskItem } from '@/components/tasks/TaskItem';
@@ -36,6 +36,7 @@ export default function ChecklistPage() {
   const [filter, setFilter] = useState<TaskFilter>("all");
   const { toast } = useToast();
 
+  // Effect for fetching tasks
   useEffect(() => {
     if (!weddingSession || !user) return;
 
@@ -43,7 +44,7 @@ export default function ChecklistPage() {
     const q = query(
       collection(db, 'tasks'), 
       where('weddingId', '==', weddingSession.id),
-      orderBy('deadline', 'asc') // Sort by deadline
+      orderBy('deadline', 'asc')
     );
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -56,17 +57,31 @@ export default function ChecklistPage() {
       setIsLoadingTasks(false);
     });
 
-    // Fetch partner profiles
-    const fetchPartners = async () => {
-      const partnerProfiles = await Promise.all(
-        weddingSession.partnerIds.map(uid => getUserProfile(uid))
-      );
-      setPartners(partnerProfiles.filter(p => p !== null) as UserProfile[]);
-    };
-    fetchPartners();
-
     return () => unsubscribe();
   }, [weddingSession, user, toast]);
+
+  // Effect for fetching partner profiles, depends on weddingSession.partnerIds
+  useEffect(() => {
+    if (!weddingSession || !weddingSession.partnerIds || weddingSession.partnerIds.length === 0) {
+      setPartners([]);
+      return;
+    }
+
+    const fetchPartners = async () => {
+      try {
+        const partnerProfiles = await Promise.all(
+          weddingSession.partnerIds.map(uid => getUserProfile(uid))
+        );
+        setPartners(partnerProfiles.filter(p => p !== null) as UserProfile[]);
+      } catch (error) {
+        console.error("Error fetching partner profiles:", error);
+        toast({variant: "destructive", title: "Error", description: "Could not load partner details."});
+        setPartners([]); // Reset or handle error state
+      }
+    };
+    
+    fetchPartners();
+  }, [weddingSession?.partnerIds, toast]); // More specific dependency
 
 
   const handleDeleteTask = async (taskId: string) => {
@@ -91,7 +106,7 @@ export default function ChecklistPage() {
   
   const filteredTasks = useMemo(() => {
     return tasks.filter(task => {
-        const isOverdue = task.status !== 'completed' && task.deadline.toDate() < new Date();
+        const isOverdue = task.status !== 'completed' && task.deadline.toDate() < new Date() && !isSameDay(task.deadline.toDate(), new Date());
         switch (filter) {
             case 'my_tasks': return task.assignedTo.includes(user?.uid || '');
             case 'completed': return task.status === 'completed';
@@ -102,8 +117,14 @@ export default function ChecklistPage() {
     });
   }, [tasks, filter, user]);
 
+  const isSameDay = (date1: Date, date2: Date) => {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate();
+  };
 
-  if (loadingSession || (isLoadingTasks && tasks.length === 0)) {
+
+  if (loadingSession || (isLoadingTasks && tasks.length === 0 && !weddingSession)) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />

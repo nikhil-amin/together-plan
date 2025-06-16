@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,13 +28,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useWedding } from '@/contexts/WeddingContext';
 import { useToast } from '@/hooks/use-toast';
 import { Timestamp } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
-import { getUserProfile } from '@/lib/firebase/auth'; // Assuming this function exists
+import { useEffect, useState, useMemo } from 'react';
 
 interface TaskFormProps {
-  task?: Task; // For editing existing task
-  onFormSubmit: () => void; // Callback after submission
-  partners: UserProfile[]; // List of partners in the wedding session
+  task?: Task; 
+  onFormSubmit: () => void; 
+  partners: UserProfile[]; 
 }
 
 const taskFormSchema = z.object({
@@ -66,7 +66,7 @@ export function TaskForm({ task, onFormSubmit, partners }: TaskFormProps) {
           title: '',
           description: '',
           deadline: new Date(),
-          assignedTo: user ? [user.uid] : [], // Default to current user
+          assignedTo: user ? [user.uid] : [], 
           status: 'pending',
         },
   });
@@ -84,7 +84,7 @@ export function TaskForm({ task, onFormSubmit, partners }: TaskFormProps) {
         form.reset({
             title: '',
             description: '',
-            deadline: new Date(new Date().setDate(new Date().getDate() + 7)), // Default to 1 week from now
+            deadline: new Date(new Date().setDate(new Date().getDate() + 7)), 
             assignedTo: [user.uid],
             status: 'pending',
         });
@@ -129,11 +129,23 @@ export function TaskForm({ task, onFormSubmit, partners }: TaskFormProps) {
     }
   }
 
-  const assignmentOptions = [
-    { value: user?.uid || 'me', label: 'Me' },
-    ...partners.filter(p => p.uid !== user?.uid).map(p => ({ value: p.uid, label: p.displayName || 'Partner' })),
-    { value: 'both', label: 'Both' }
-  ];
+  const assignmentOptions = useMemo(() => {
+    const options = [{ value: user?.uid || 'me', label: 'Me' }];
+    const uniquePartnerIdsInSession = weddingSession?.partnerIds || [];
+
+    partners.forEach(p => {
+      if (p.uid !== user?.uid && uniquePartnerIdsInSession.includes(p.uid)) {
+        options.push({ value: p.uid, label: p.displayName || 'Partner' });
+      }
+    });
+
+    // Add "Both" option only if there are exactly two unique partners in the session 
+    // and both are represented (current user and one other partner)
+    if (uniquePartnerIdsInSession.length === 2 && options.length === 2) {
+         options.push({ value: 'both', label: 'Both' });
+    }
+    return options;
+  }, [user, partners, weddingSession?.partnerIds]);
 
 
   return (
@@ -208,8 +220,19 @@ export function TaskForm({ task, onFormSubmit, partners }: TaskFormProps) {
               <FormItem>
                 <FormLabel>Assign To</FormLabel>
                 <Select 
-                  onValueChange={(value) => field.onChange(value === 'both' && user ? partners.map(p => p.uid) : [value])} 
-                  defaultValue={field.value.length > 1 && user && partners.every(p => field.value.includes(p.uid)) ? 'both' : field.value[0]}
+                  onValueChange={(value) => {
+                    if (value === 'both' && user && weddingSession?.partnerIds) {
+                         field.onChange(weddingSession.partnerIds);
+                    } else {
+                        field.onChange([value]);
+                    }
+                  }} 
+                  // Determine default value for Select: 'both' if all partnerIds are selected, else the first selected id.
+                  defaultValue={
+                    field.value.length === (weddingSession?.partnerIds?.length || 0) && (weddingSession?.partnerIds?.length || 0) > 1 
+                    ? 'both' 
+                    : field.value[0]
+                  }
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -243,6 +266,9 @@ export function TaskForm({ task, onFormSubmit, partners }: TaskFormProps) {
                   <SelectContent>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
+                    {/* Overdue is usually a calculated state, not manually set.
+                        If you need to manually set it, keep it. Otherwise, consider removing.
+                        For now, keeping it as per existing schema. */}
                     <SelectItem value="overdue">Overdue</SelectItem>
                   </SelectContent>
                 </Select>

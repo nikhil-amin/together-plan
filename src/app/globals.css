@@ -8,85 +8,92 @@ body {
 
 @layer base {
   :root {
-    --background: 353 67% 94%; /* Light Blush Pink #F9E4E6 */
-    --foreground: 240 10% 15%; /* Darker for readability on pink */
+    --background: 30 50% 97%; /* Very Light Creamy Peach */
+    --foreground: 20 20% 25%; /* Dark Brownish Gray */
     
-    --card: 0 0% 98%; /* Off-white for cards */
-    --card-foreground: 240 10% 15%;
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 20 20% 25%;
 
-    --popover: 0 0% 98%;
-    --popover-foreground: 240 10% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 20% 25%;
 
-    --primary: 240 67% 88%; /* Lavender #E6E6FA, adjusted slightly for better button appearance */
-    --primary-foreground: 240 60% 20%; /* Dark text on Lavender */
+    /* Primary: Dusty Rose / Soft Coral */
+    --primary: 350 70% 65%; /* #E9839A - A bit more vibrant dusty rose */
+    --primary-foreground: 350 70% 15%; /* Darker rose for contrast */
 
-    --secondary: 45 100% 90%; /* Lighter Gold for secondary elements */
-    --secondary-foreground: 45 90% 25%; /* Darker text on gold */
+    /* Secondary: Soft Gold / Champagne */
+    --secondary: 40 80% 80%; /* #F9E0B2 - Light, warm gold */
+    --secondary-foreground: 40 80% 30%; /* Richer gold/brown text */
 
-    --muted: 240 30% 92%;
-    --muted-foreground: 240 10% 45%;
+    --muted: 30 30% 92%; /* Lighter shade of background */
+    --muted-foreground: 20 15% 45%; /* Softer gray */
 
-    --accent: 45 100% 85%; /* Light Gold #FFECB3 */
-    --accent-foreground: 40 90% 25%; /* Brownish text on gold accent */
+    /* Accent: A gentle Teal or Mint */
+    --accent: 170 50% 70%; /* #99D9D1 - Soft Teal/Mint */
+    --accent-foreground: 170 50% 20%; /* Darker teal text */
 
     --destructive: 0 70% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 20% 88%;
-    --input: 0 0% 96%; /* Lighter input background */
-    --ring: 240 67% 80%; /* Lavender for focus rings */
+    --border: 30 20% 88%; /* Light border, harmonious with background */
+    --input: 30 20% 94%; /* Input background slightly off-white */
+    --ring: 350 70% 60%; /* Primary color for focus rings */
 
-    --radius: 0.5rem;
+    --radius: 0.75rem; /* Slightly more rounded corners for a softer feel */
 
-    /* Sidebar variables - kept for shadcn consistency, may not be used heavily */
-    --sidebar-background: 240 10% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 67% 88%; 
-    --sidebar-primary-foreground: 240 60% 20%;
-    --sidebar-accent: 45 100% 90%;
-    --sidebar-accent-foreground: 45 90% 25%;
-    --sidebar-border: 240 20% 88%;
-    --sidebar-ring: 240 67% 80%;
+    /* Sidebar variables */
+    --sidebar-background: 30 40% 95%; /* Slightly darker cream for sidebar */
+    --sidebar-foreground: 20 20% 25%;
+    --sidebar-primary: 350 70% 65%; 
+    --sidebar-primary-foreground: 350 70% 15%;
+    --sidebar-accent: 170 50% 70%;
+    --sidebar-accent-foreground: 170 50% 20%;
+    --sidebar-border: 30 20% 88%;
+    --sidebar-ring: 350 70% 60%;
   }
 
   .dark {
-    --background: 240 10% 10%;
-    --foreground: 0 0% 95%;
+    /* For dark mode, let's go with deeper, richer tones */
+    --background: 220 30% 10%; /* Deep Navy/Charcoal */
+    --foreground: 220 20% 90%; /* Light Gray/Off-white */
 
-    --card: 240 10% 15%;
-    --card-foreground: 0 0% 95%;
+    --card: 220 30% 15%; /* Slightly lighter than background */
+    --card-foreground: 220 20% 90%;
 
-    --popover: 240 10% 10%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 220 30% 12%;
+    --popover-foreground: 220 20% 90%;
 
-    --primary: 240 60% 65%; /* Lavender for dark mode */
-    --primary-foreground: 240 60% 95%; /* Light text on dark lavender */
+    /* Primary: Richer Dusty Rose */
+    --primary: 350 60% 55%; /* Deeper rose */
+    --primary-foreground: 350 60% 95%; /* Very light text */
 
-    --secondary: 45 80% 60%; /* Gold for dark mode secondary */
-    --secondary-foreground: 45 90% 15%;
+    /* Secondary: Muted Gold */
+    --secondary: 40 60% 50%; /* Darker, muted gold */
+    --secondary-foreground: 40 60% 90%; /* Light gold text */
 
-    --muted: 240 10% 20%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 220 20% 20%;
+    --muted-foreground: 220 15% 65%;
 
-    --accent: 45 80% 70%; /* Gold for dark mode accent */
-    --accent-foreground: 45 90% 90%; /* Light text on dark gold */
+    /* Accent: Brighter Teal */
+    --accent: 170 50% 55%; /* More vibrant teal for dark mode */
+    --accent-foreground: 170 50% 95%; /* Light teal text */
 
     --destructive: 0 60% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 10% 25%;
-    --input: 240 10% 22%;
-    --ring: 240 60% 60%;
+    --border: 220 20% 25%;
+    --input: 220 20% 22%;
+    --ring: 350 60% 50%;
 
     /* Sidebar dark variables */
-    --sidebar-background: 240 10% 12%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 240 60% 65%;
-    --sidebar-primary-foreground: 240 60% 95%;
-    --sidebar-accent: 45 80% 60%;
-    --sidebar-accent-foreground: 45 90% 15%;
-    --sidebar-border: 240 10% 25%;
-    --sidebar-ring: 240 60% 60%;
+    --sidebar-background: 220 30% 12%;
+    --sidebar-foreground: 220 20% 90%;
+    --sidebar-primary: 350 60% 55%;
+    --sidebar-primary-foreground: 350 60% 95%;
+    --sidebar-accent: 170 50% 55%;
+    --sidebar-accent-foreground: 170 50% 95%;
+    --sidebar-border: 220 20% 25%;
+    --sidebar-ring: 350 60% 50%;
   }
 }
 

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -183,7 +184,7 @@ export function VendorSuggestionForm() {
                 <CardHeader>
                   <CardTitle className="text-lg">{vendor.name}</CardTitle>
                 </CardHeader>
-                 <Image src={`https://placehold.co/600x400.png?cx=${Math.random()}`} alt={vendor.name} width={600} height={400} className="w-full h-48 object-cover" data-ai-hint="vendor event" />
+                 <Image src={`https://placehold.co/600x400.png?cx=${Math.random()}`} alt={vendor.name} width={600} height={400} className="w-full h-48 object-cover" data-ai-hint="wedding vendor" />
                 <CardContent className="flex-grow pt-4">
                   <p className="text-sm text-muted-foreground mb-2">{vendor.description}</p>
                   <p className="text-sm"><strong>Contact:</strong> {vendor.contactInfo}</p>

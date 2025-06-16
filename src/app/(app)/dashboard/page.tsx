@@ -95,7 +95,7 @@ export default function DashboardPage() {
             {label: 'Vendors', href: '/vendor-suggestions', icon: Sparkles},
             {label: 'Settings', href: '/settings', icon: Settings},
           ].map(link => (
-            <Button key={link.label} variant="outline" asChild className="h-20 sm:h-24 flex-col gap-1 text-center">
+            <Button key={link.label} variant="outline" asChild className="h-20 sm:h-24 flex-col gap-1 text-center shadow-md hover:shadow-lg transition-shadow border-2 border-transparent hover:border-primary/30">
               <Link href={link.href}>
                 <link.icon className="h-6 w-6 sm:h-8 sm:w-8 mb-1" />
                 <span className="text-xs sm:text-sm">{link.label}</span>

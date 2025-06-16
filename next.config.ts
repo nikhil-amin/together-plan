@@ -4,7 +4,7 @@ import type {NextConfig} from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   output: 'export', // For static site generation
-  basePath: '/togetherplan', // IMPORTANT: Replace '/togetherplan' with '/your-repository-name' if different
+  basePath: '/together-plan', // IMPORTANT: Replace '/together-plan' with '/your-repository-name' if different
   typescript: {
     ignoreBuildErrors: true,
   },

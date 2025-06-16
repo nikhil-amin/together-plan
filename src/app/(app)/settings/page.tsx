@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -16,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { Timestamp } from 'firebase/firestore';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { format } } from 'date-fns';
+import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import {
   AlertDialog,
@@ -33,7 +34,7 @@ import {
 
 export default function SettingsPage() {
   const { user, loading: authLoading } = useAuth();
-  const { weddingSession, loadingSession, refreshWeddingSession, setWeddingSession } = useWedding();
+  const { weddingSession, loadingSession, setWeddingSession } = useWedding(); // Removed refreshWeddingSession
   const { toast } = useToast();
   const router = useRouter();
 
@@ -51,15 +52,16 @@ export default function SettingsPage() {
 
   if (!user || !weddingSession) {
     // This should be handled by layout, but as a fallback:
-    router.replace('/login');
+    router.replace('/login'); // Or /welcome if user exists but no session
     return null;
   }
 
   const handleProfileUpdate = async () => {
+    if (!user) return;
     setIsSavingProfile(true);
     try {
       await updateUserProfile(user.uid, { displayName });
-      // Re-fetch or update user in AuthContext if needed, though onAuthStateChanged might handle it.
+      // AuthContext will update reactively
       toast({ title: 'Profile Updated', description: 'Your display name has been updated.' });
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Error', description: `Failed to update profile: ${error.message}` });
@@ -69,14 +71,14 @@ export default function SettingsPage() {
   };
   
   const handleWeddingDateChange = async () => {
-    if (!newWeddingDate) {
-      toast({variant: 'destructive', title: 'Invalid Date', description: 'Please select a new wedding date.'});
+    if (!newWeddingDate || !weddingSession) {
+      toast({variant: 'destructive', title: 'Invalid Date or Session', description: 'Please select a new wedding date.'});
       return;
     }
     setIsSavingWedding(true);
     try {
       await updateWeddingSession(weddingSession.id, { weddingDate: Timestamp.fromDate(newWeddingDate) });
-      refreshWeddingSession(); // This should update the context
+      // WeddingContext will update reactively due to its snapshot listener
       toast({ title: 'Wedding Date Updated', description: 'Your wedding date has been changed.' });
     } catch (error: any) {
        toast({ variant: 'destructive', title: 'Error', description: `Failed to update wedding date: ${error.message}` });
@@ -86,6 +88,7 @@ export default function SettingsPage() {
   };
 
   const handleLeaveSession = async () => {
+    if (!user || !weddingSession) return;
     if (weddingSession.ownerId === user.uid) {
         toast({variant: 'destructive', title: "Cannot Leave", description: "As the owner, you must delete the session instead of leaving."});
         return;
@@ -95,13 +98,14 @@ export default function SettingsPage() {
         setWeddingSession(null); // Clear context immediately
         await updateUserProfile(user.uid, { activeWeddingId: null }); // Clear on user profile
         toast({title: "Left Session", description: "You have left the wedding session."});
-        router.push('/welcome');
+        router.push('/welcome'); // AuthContext & WeddingContext will update, triggering layout redirect too
     } catch (error: any) {
         toast({variant: 'destructive', title: "Error Leaving", description: error.message});
     }
   };
 
   const handleDeleteSession = async () => {
+    if (!user || !weddingSession) return;
      if (weddingSession.ownerId !== user.uid) {
         toast({variant: 'destructive', title: "Not Authorized", description: "Only the session owner can delete the wedding."});
         return;
@@ -114,7 +118,7 @@ export default function SettingsPage() {
         await deleteWeddingSession(weddingSession.id);
         setWeddingSession(null); // Clear context immediately
         toast({title: "Session Deleted", description: "The wedding session has been deleted."});
-        router.push('/welcome');
+        router.push('/welcome'); // AuthContext & WeddingContext will update, triggering layout redirect too
     } catch (error: any) {
         toast({variant: 'destructive', title: "Error Deleting", description: error.message});
     }
@@ -272,9 +276,13 @@ export default function SettingsPage() {
 }
 
 // Helper to get buttonVariants for AlertDialogAction (if not auto-imported)
-const buttonVariants = ({variant}: {variant: "destructive" | "default" | "outline" | "secondary" | "ghost" | "link"}) => {
-    if (variant === "destructive") return "bg-destructive text-destructive-foreground hover:bg-destructive/90";
-    // Add other variants if needed
-    return "";
-}
+// This should ideally be part of your ui/button.ts or utils, but kept here for self-containment for now.
+const buttonVariantsStyles = {
+    destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+    // Add other variants if needed for the helper
+};
 
+const buttonVariants = ({variant}: {variant: keyof typeof buttonVariantsStyles}) => {
+    return buttonVariantsStyles[variant] || "";
+}
+    

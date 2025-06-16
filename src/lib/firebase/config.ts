@@ -15,6 +15,17 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
+// Map keys in firebaseConfig to their corresponding environment variable suffixes
+const keyToEnvVarSuffix: Record<keyof typeof firebaseConfig, string> = {
+  apiKey: 'API_KEY',
+  authDomain: 'AUTH_DOMAIN',
+  projectId: 'PROJECT_ID',
+  storageBucket: 'STORAGE_BUCKET',
+  messagingSenderId: 'MESSAGING_SENDER_ID',
+  appId: 'APP_ID',
+  measurementId: 'MEASUREMENT_ID',
+};
+
 // Check if all required Firebase config values are present
 const requiredConfigValues: (keyof typeof firebaseConfig)[] = [
   'apiKey', 
@@ -26,7 +37,9 @@ const requiredConfigValues: (keyof typeof firebaseConfig)[] = [
 let firebaseAppInitialized = true;
 for (const key of requiredConfigValues) {
   if (!firebaseConfig[key]) {
-    console.error(`Firebase config error: NEXT_PUBLIC_FIREBASE_${key.toUpperCase()} is not defined. Please set it in your .env file.`);
+    const envVarSuffix = keyToEnvVarSuffix[key] || key.toUpperCase(); // Fallback to uppercase key if not in map
+    const envVarName = `NEXT_PUBLIC_FIREBASE_${envVarSuffix}`;
+    console.error(`Firebase config error: ${envVarName} is not defined. Please set it in your .env file.`);
     firebaseAppInitialized = false; 
     // It's better to throw an error or handle this state more gracefully in a real app,
     // but for now, logging will help the user. The app will likely crash or misbehave

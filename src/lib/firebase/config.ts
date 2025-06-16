@@ -28,23 +28,32 @@ const keyToEnvVarSuffix: Record<keyof typeof firebaseConfig, string> = {
 
 // Check if all required Firebase config values are present
 const requiredConfigValues: (keyof typeof firebaseConfig)[] = [
-  'apiKey', 
-  'authDomain', 
+  'apiKey',
+  'authDomain',
   'projectId',
-  // storageBucket, messagingSenderId, appId, measurementId are often optional for basic auth/firestore
 ];
 
 let firebaseAppInitialized = true;
+const missingEnvVars: string[] = [];
+
 for (const key of requiredConfigValues) {
   if (!firebaseConfig[key]) {
-    const envVarSuffix = keyToEnvVarSuffix[key] || key.toUpperCase(); // Fallback to uppercase key if not in map
+    const envVarSuffix = keyToEnvVarSuffix[key as keyof typeof firebaseConfig] || String(key).toUpperCase();
     const envVarName = `NEXT_PUBLIC_FIREBASE_${envVarSuffix}`;
-    console.error(`Firebase config error: ${envVarName} is not defined. Please set it in your .env file.`);
-    firebaseAppInitialized = false; 
-    // It's better to throw an error or handle this state more gracefully in a real app,
-    // but for now, logging will help the user. The app will likely crash or misbehave
-    // if Firebase isn't initialized correctly.
+    missingEnvVars.push(envVarName);
   }
+}
+
+if (missingEnvVars.length > 0) {
+  console.error(
+    `Firebase config error: The following environment variables are not defined. Please set them in your .env file:\n` +
+    missingEnvVars.map(varName => `- ${varName}`).join('\n') +
+    `\n\nAfter updating .env, you may need to restart your Next.js development server for the changes to take effect.`
+  );
+  firebaseAppInitialized = false;
+  // It's better to throw an error or handle this state more gracefully in a real app,
+  // but for now, logging will help the user. The app will likely crash or misbehave
+  // if Firebase isn't initialized correctly.
 }
 
 // Initialize Firebase

@@ -4,6 +4,7 @@ import type {NextConfig} from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   output: 'export', // Add this line for static site generation
+  basePath: '/together-plan',
   typescript: {
     ignoreBuildErrors: true,
   },

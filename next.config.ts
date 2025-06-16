@@ -1,7 +1,9 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: 'export', // Add this line for static site generation
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -17,6 +19,10 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+    // For static export, if you use next/image for anything other than fully static URLs,
+    // you might need to set unoptimized: true.
+    // However, placehold.co URLs should be fine.
+    // unoptimized: true, 
   },
 };
 
